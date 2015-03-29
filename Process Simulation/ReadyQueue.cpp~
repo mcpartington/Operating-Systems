@@ -1,0 +1,169 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <fstream>
+#include <ctime>
+using namespace std;
+#include "ReadyQueue.h"
+
+ReadyQueue::ReadyQueue(int heapSize)
+{
+  heapPointer= new Process[heapSize];
+  int numProcessInReadyQueue=0;
+  newProcess= new Process[heapSize];
+}
+
+ReadyQueue::~ReadyQueue()
+{
+  delete[] heapPointer;
+}
+
+//=============================================================================
+//this function will reheap the heap once you remove the root of the heap. 
+//=============================================================================
+void ReadyQueue::reheapRemove( int root, int bottom)
+{
+  int minChild; 
+  int rightChild;
+  int leftChild;
+  Process temp;
+
+  leftChild= root*2 +1;
+  rightChild = root *2 +2;
+  
+  if( leftChild <= bottom)//if leftchild index is <= bottom index, then we re not finished 
+    {
+
+      //now must compare the leftChild and the rightChild to see which is larger
+      if( leftChild == bottom)//root has no right child- then left has to be max
+	{minChild = leftChild;}
+      else// there is a right and left child
+	{
+	  if(heapPointer[leftChild].getPriorityValue() >= heapPointer[rightChild].getPriorityValue() )// if the right child priority is larger then the left 
+	    {
+	      minChild= rightChild;
+	    }
+	  else // the left child is larger than the right
+	    {
+	      minChild = leftChild;
+	    }
+	}
+
+      if(heapPointer[root].getPriorityValue() > heapPointer[minChild].getPriorityValue() )// if the root is larger than largest child, then need to swap
+	{
+	  temp = heapPointer[root];
+	  heapPointer[root]=heapPointer[minChild];
+	  heapPointer[minChild]= temp;
+	  reheapRemove(minChild, bottom);
+	}
+    }
+}
+//=============================================================================
+
+//=============================================================================
+//=============================================================================
+void ReadyQueue::reheapAdd(int root, int bottom)
+{
+  int parent;
+  Process temp;
+
+  if(bottom > root)//if bottom index greater than root, not finished
+    {
+      parent = (bottom -1) /2 ;// get index of parent
+      if( heapPointer[parent].getPriorityValue() > heapPointer[bottom].getPriorityValue() )//if the parent is greater than the child, want to switch- put lowest higher up
+	{
+	  temp= heapPointer[parent];
+	  heapPointer[parent]= heapPointer[bottom];// parent now is the bottom
+	  heapPointer[bottom]=temp;// bottom is now the parent
+	  reheapAdd(root, parent);//recursively call until everything is reheaped
+	}
+    }
+}
+//=============================================================================
+
+
+//=============================================================================
+//this function acutally adds the process to the heap
+//=============================================================================
+bool ReadyQueue::insertProcessToReadyQueue( Process *newProcess)
+{
+  if(numProcessInReadyQueue < heapSize)
+    {
+      heapPointer[numProcessInReadyQueue] = *newProcess;
+      newProcess -> changeState("READY");
+      reheapAdd(0, numProcessInReadyQueue);
+      numProcessInReadyQueue++;
+      return true;
+    }
+  else
+    return false;
+}
+//=============================================================================
+
+
+//=============================================================================
+//=============================================================================
+void ReadyQueue::printProcessInfo( Process *newPointer)
+{ 
+  newPointer[0]=*newPointer;
+  cout << "ID: " << newPointer->getId() << " Priority Value : "<< newPointer -> getPriorityValue() << endl;
+}
+//=============================================================================
+
+
+
+//=============================================================================
+//=============================================================================
+Process *ReadyQueue::removeHighestProc()//aka remove root
+{
+	heapPointer[0].changeState("RUNNING"); 
+ Process *temp = new Process(heapPointer[0].getId() , heapPointer[0].getPriorityValue());
+ numProcessInReadyQueue --;
+  //move last leaf in heap to root
+  heapPointer[0]= heapPointer[numProcessInReadyQueue];
+  reheapRemove(0, numProcessInReadyQueue -1);
+  if(numProcessInReadyQueue == 0)
+    return NULL;
+  else 
+  {	
+	  return temp;
+  }
+}
+//=============================================================================
+
+//=============================================================================
+//=============================================================================
+int ReadyQueue::size()
+{
+  return numProcessInReadyQueue;
+}
+
+void ReadyQueue:: displayQueue()
+{
+  cout<<"__________________________________"<<endl;
+  for( int i=0; i< numProcessInReadyQueue; i++)
+    {
+      cout<< "ID: " << heapPointer[i].getId() << " Priority Value: " << heapPointer[i].getPriorityValue() << endl;
+    }
+  cout<<endl;
+}
+//=============================================================================
+
+void ReadyQueue::decrement()
+{
+	for (int i = 0; i < numProcessInReadyQueue; i++)
+	{
+		heapPointer[i].priorityValue -= 1;
+	}
+}
+
+bool ReadyQueue::searchForProcess(int newProcessId)
+{
+	
+	for(int i = 0; i < numProcessInReadyQueue; i++)
+	{
+	  if( heapPointer[i].id == newProcessId)//add
+	    return true;
+	}
+	return false; 
+}

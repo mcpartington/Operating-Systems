@@ -1,0 +1,32 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <fstream>
+#include <ctime>
+using namespace std;
+#include "Process.h"
+
+class ReadyQueue// implemented as a heap
+{
+private:
+  Process *heapPointer;
+  Process *newProcess;
+  int numProcessInReadyQueue;
+
+public:
+  ReadyQueue (int heapSize);
+  ~ReadyQueue();
+
+  Process removeHighestProcess();
+  int size ();
+  void displayQueue();
+  void decrement();
+  void reheapRemove(int root, int bottom);//used to reheap after removing an item
+  void reheapAdd(int root, int bottom);
+  bool insertProcessToReadyQueue( Process *winners);
+  bool addProcess( int Id, int priorityValue);
+  Process *removeHighestProc();
+  void printProcessInfo(Process *newProcess);
+  bool searchForProcess(int newProcessId);
+
+ };

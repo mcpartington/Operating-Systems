@@ -1,0 +1,25 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <fstream>
+#include <ctime>
+using namespace std;
+
+
+class Process
+{
+public:
+  int id;
+  string state;
+  int priorityValue;
+
+  Process();
+  Process(int currentId, int currentPriorityValue);//constructor 
+  ~Process();
+  void changeState(string newState);
+  void setState(string newState); 
+  int getId( );
+  string getState();
+  int getPriorityValue();
+  void printProcessInfo();
+};

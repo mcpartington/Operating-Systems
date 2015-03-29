@@ -1,0 +1,54 @@
+#include <iostream>
+#include <stdlib.h>
+#include <string>
+#include <fstream>
+#include <ctime>
+using namespace std;
+#include "Process.h"
+
+
+Process::Process()
+{
+  id=0;
+  priorityValue=0;
+  state= "";
+}
+
+Process::Process(int currentId, int currentPriorityValue)
+{
+  id= currentId;
+  priorityValue=currentPriorityValue;
+  state= "NEW";
+}
+
+Process::~Process()
+{}
+
+void Process:: printProcessInfo()
+{
+  cout<<"ID: " << id << " Priority Value: "<< priorityValue<<endl;
+}
+void Process:: setState( string newState)
+{
+  state=newState;
+}
+
+int Process::getId( )
+{
+  return id;
+}
+
+string Process:: getState()
+{
+  return state;
+}
+
+int Process:: getPriorityValue()
+{
+  return priorityValue;
+}
+
+void Process::changeState(string newState)
+{
+  state=newState;
+}
